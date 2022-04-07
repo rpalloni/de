@@ -1,6 +1,12 @@
+__pycache__/
 .env
 .venv
 .logs
 env/
 venv/
 logs/
+plugins/
+scheduler/
+*.csv
+*.xlsx
+*.json
