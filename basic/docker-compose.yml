@@ -37,7 +37,11 @@ services:
     build:
       dockerfile: ./docker/db.dockerfile
       context: .
+    ports:
+      - 5432:5432  # laptop_port:container_port
     environment:
+      DATABASE_HOST: basic_postgres_1
+      DATABASE_PORT: 5432
       POSTGRES_USER: airflow
       POSTGRES_PASSWORD: airflow
       POSTGRES_DB: airflow
