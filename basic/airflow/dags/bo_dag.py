@@ -18,7 +18,7 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 0,
-    #'retry_delay': timedelta(minutes=2),
+    'retry_delay': timedelta(minutes=2),
 }
 
 
@@ -39,10 +39,17 @@ run_bash_extractor = BashOperator(
     dag=dag,
 )
 
+run_bash_saver= BashOperator(
+    task_id='bash_saver',
+    bash_command='python /opt/airflow/dags/jobs/save_data.py',
+    dag=dag,
+)
+
 
 start_op = DummyOperator(task_id='start_task', dag=dag)
 end_op = DummyOperator(task_id='last_task', dag=dag)
 
 
 # DAG dependencies
-start_op >> run_bash_extractor >> end_op
+# run parallel
+start_op >> [run_bash_extractor, run_bash_saver] >> end_op

@@ -58,4 +58,5 @@ end_op = DummyOperator(task_id='last_task', dag=dag)
 
 
 # DAG dependencies
+# run sequential
 start_op >> run_python_extractor  >> end_op
