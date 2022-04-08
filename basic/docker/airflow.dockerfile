@@ -5,6 +5,7 @@ USER root
 ARG YOUR_ENV="virtualenv"
 
 ENV YOUR_ENV=${YOUR_ENV} \
+    PYTHONPATH="/opt/airflow/" \
     PYTHONFAULTHANDLER=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONHASHSEED=random \
