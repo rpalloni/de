@@ -1,4 +1,4 @@
-### basic docker template
+### basic airflow docker template
 https://airflow.apache.org/docs/apache-airflow/stable/start/docker.html#running-airflow-in-docker
 
 ### env
