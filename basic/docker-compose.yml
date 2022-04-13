@@ -5,6 +5,8 @@ x-airflow-common:
   build:
       dockerfile: ./docker/airflow.dockerfile
       context: .
+  # env_file:
+  #   - .env
   environment:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
@@ -18,7 +20,7 @@ x-airflow-common:
     AIRFLOW__EMAIL__EMAIL_BACKEND: 'airflow.utils.email.send_email_smtp'
     AIRFLOW__SCHEDULER__ALLOW_TRIGGER_IN_FUTURE: 'true'
     AIRFLOW__CORE__ENABLE_XCOM_PICKLING: 'true' # json
-    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
+    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-} # defined in airflow.dockerfile
   volumes:
     - ./airflow/dags:/opt/airflow/dags
     - ./airflow/logs:/opt/airflow/logs
@@ -65,7 +67,7 @@ services:
     restart: always
 
   airflow-webserver:
-    <<: *airflow-common
+    <<: *airflow-common # insert airflow-common block above
     command: webserver
     ports:
       - 8080:8080
