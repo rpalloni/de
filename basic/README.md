@@ -2,13 +2,13 @@
 https://airflow.apache.org/docs/apache-airflow/stable/start/docker.html#running-airflow-in-docker
 
 1 cluster with 8 containers: \
-airflow-init
-airflow-webserver
-airflow-triggerer
-airflow-scheduler
-airflow-worker
-flower --> queuing
-postgres --> db
+airflow-init --> setup check and containers lunch
+airflow-webserver --> app
+airflow-triggerer --> 
+airflow-scheduler --> assign tasks to workers
+airflow-worker --> run dags tasks
+flower --> queuing tasks
+postgres --> airflow data
 redis --> messaging among containers
 
 ### env

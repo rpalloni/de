@@ -22,11 +22,11 @@ x-airflow-common:
     AIRFLOW__CORE__ENABLE_XCOM_PICKLING: 'true' # json
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-} # defined in airflow.dockerfile
   volumes:
-    - ./airflow/dags:/opt/airflow/dags
+    - ./airflow/dags:/opt/airflow/dags  # laptop_folder:container_folder sync
     - ./airflow/logs:/opt/airflow/logs
     - ./airflow/plugins:/opt/airflow/plugins
     - ./airflow/scheduler:/opt/airflow/scheduler
-  user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-50000}"
+  user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-50000}" # echo -e "AIRFLOW_UID=$(id -u)\nAIRFLOW_GID=0" > .env
   depends_on:
     &airflow-common-depends-on
     redis:
@@ -67,7 +67,7 @@ services:
     restart: always
 
   airflow-webserver:
-    <<: *airflow-common # insert airflow-common block above
+    <<: *airflow-common # << inherit airflow-common block above
     command: webserver
     ports:
       - 8080:8080
