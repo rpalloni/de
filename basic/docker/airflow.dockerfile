@@ -7,7 +7,7 @@ ARG YOUR_ENV="virtualenv"
 
 ENV YOUR_ENV=${YOUR_ENV} \
     PYTHONPATH="/opt/" \
-    # PYTHONPATH="/opt/" -> airflow-common volumes
+    # PYTHONPATH="/opt/" -> python path to airflow-common volumes
     PYTHONFAULTHANDLER=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONHASHSEED=random \
@@ -39,5 +39,5 @@ COPY poetry.lock .
 RUN poetry config virtualenvs.create false \
     && poetry install $(test "$YOUR_ENV" = production) --no-root --no-dev --no-interaction --no-ansi
 
-# use airflow for running
+# use airflow for r/w files
 USER airflow
