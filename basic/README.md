@@ -15,9 +15,14 @@ https://airflow.apache.org/docs/apache-airflow/stable/start/docker.html#running-
 create .env file
 echo -e "AIRFLOW_UID=$(id -u)\nAIRFLOW_GID=0" > .env
 
+### config
+WebApp user: default [Airflow, airflow] => in airflow-init set _AIRFLOW_WWW_USER_USERNAME _AIRFLOW_WWW_USER_PASSWORD \
+FileSensor: create a new connection to read the files in the machine (web interface: Admin > Connections) \
+[https://airflow.apache.org/docs/apache-airflow/stable/howto/connection.html]
+
 ### browser
 airflow
-http://localhost:8080/ [Airflow, airflow]
+http://localhost:8080/
 
 celery
 http://localhost:5555/
