@@ -1,6 +1,6 @@
 # de
 
-###  and stats
+### DataOps
 
 DE tools:
 * Airflow
