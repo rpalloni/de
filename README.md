@@ -3,6 +3,7 @@
 ### DataOps
 
 DE tools:
+* PySpark
 * Airflow
 * Docker
 * Atom + Hydrogen https://github.com/nteract/hydrogen
