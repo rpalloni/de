@@ -31,7 +31,7 @@ http://localhost:5555/
 docker-compose exec airflow-webserver bash
 
 ### add/remove libs
-poetry new <projectname> 
+poetry new <projectname>
 poetry add <libname>
 poetry remove <libname>
 
@@ -44,3 +44,15 @@ use sensor to check file presence
 xcom: save/retrieve task result (1GB) in a variable to be used by another task
 * xcom_push
 * xcom_pull
+
+#### schedule_interval
+
+| Frequency                                                         | @             |
+| ----------------------------------------------------------------- | ------------- |
+| Don't schedule; use exclusively "externally triggered" DAGs.      | None          |
+| Schedule once and only once                                       | @once         |
+| Run once an hour at the beginning of the hour                     | @hourly       |
+| Run once a day at midnight | are neat                             | @daily        |
+| Run once a week at midnight on Sunday morning                     | @weekly       |
+| Run once a month at midnight on the first day of the month        | @monthly      |
+| Run once a year at midnight of January 1                          | @yearly       |

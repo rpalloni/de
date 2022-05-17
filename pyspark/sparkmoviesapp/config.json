@@ -1,0 +1,5 @@
+{
+  "app_name":"MovieData",
+  "input_data_path":"data",
+  "output_data_path":"data/df"
+}
