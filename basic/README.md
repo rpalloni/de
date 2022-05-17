@@ -12,8 +12,10 @@ https://airflow.apache.org/docs/apache-airflow/stable/start/docker.html#running-
 * redis --> messaging among containers
 
 ### env
-create .env file
+create .env file \
+~~~
 echo -e "AIRFLOW_UID=$(id -u)\nAIRFLOW_GID=0" > .env
+~~~
 
 ### config
 WebApp user: default [Airflow, airflow] => in airflow-init set _AIRFLOW_WWW_USER_USERNAME _AIRFLOW_WWW_USER_PASSWORD \
