@@ -1,0 +1,32 @@
+services:
+    # Source databases
+    postgres:
+        image: postgres:13
+        container_name: postgres
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+            - POSTGRES_DB=public
+        volumes:
+            - ./pgdata:/var/lib/postgresql/data:rw
+        restart: always
+        ports:
+            - "5432:5432"
+
+    # Optional Jupyter environment
+    notebook:
+        image: jupyter/all-spark-notebook:spark-3.1.2
+        container_name: notebook
+        user: root
+        volumes:
+            - ./workspace:/home/jovyan:rw # wd/path/on/laptop:wd/path/in/container
+        environment:
+            IS_NOTEBOOK_ENV: 1
+            PYSPARK_SUBMIT_ARGS: --packages org.postgresql:postgresql:42.2.22 --driver-class-path /home/jovyan/postgresql-42.2.22.jar pyspark-shell
+            CHOWN_EXTRA: "/home/jovyan"
+            CHOWN_EXTRA_OPTS: "-R"
+        command: sh -c "pip install psycopg2-binary==2.9.1; cd /home/jovyan; wget -nc https://jdbc.postgresql.org/download/postgresql-42.2.22.jar; tini -g -- start-notebook.sh"
+        depends_on:
+            - postgres
+        ports:
+            - "8888:8888"
