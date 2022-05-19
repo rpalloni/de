@@ -12,6 +12,9 @@ Docs:
 - http://spark.apache.org/docs/latest/api/python/index.html
 - https://spark.apache.org/docs/latest/api/python/reference/index.html
 
+Examples:
+- https://github.com/apache/spark/tree/v3.2.1/examples/src/main/python
+
 
 ### Spark data structure interfaces
 - RDD resilient distributed dataset (*original data structure for Apache Spark*)

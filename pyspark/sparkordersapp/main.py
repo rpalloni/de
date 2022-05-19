@@ -84,7 +84,6 @@ q1.show()
 q2 = (
     df
     .filter('cancel_reason is NULL') # OK .filter(df.cancel_reason.isNull())  KO .where(df.cancel_reason == 'null')
-    .select('*')
     .groupBy(
         expr('substring(creation_time,1,10)').alias('date'),
         'country_code'
