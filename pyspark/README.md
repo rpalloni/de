@@ -29,7 +29,8 @@ Once created, the distributed dataset can be operated on in parallel
 
 ### Partitions
 One important parameter for parallel collections is the number of partitions/slices to cut the dataset into. \
-**Spark will run one task for each partition of the cluster**. Typically you want 2-4 partitions for each CPU in your cluster. \ Normally, Spark tries to set the number of partitions automatically based on your cluster. \
+**Spark will run one task for each partition of the cluster**. Typically you want 2-4 partitions for each CPU in your cluster.
+Normally, Spark tries to set the number of partitions automatically based on your cluster.
 However, you can also set it manually by passing it as a second parameter to parallelize (e.g. sc.parallelize(data, 10)).
 Spark creates one partition for each block of the file (blocks being 128MB).
 
