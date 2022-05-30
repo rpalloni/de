@@ -9,7 +9,12 @@ from pyspark.ml.regression import LinearRegression
 
 
 # create spark session
-spark = SparkSession.builder.master('local[4]').appName('AirQuality').getOrCreate()
+spark = (
+    SparkSession.builder
+    .master('local[4]')
+    .appName('AirQuality')
+    .getOrCreate()
+)
 spark # open Spark Web UI to monitor jobs/stages/storage/env/executors/SQL
 
 # configure and start spark history server (app log)
