@@ -1,4 +1,4 @@
-Set up docker with PostgreSQL and (optional) notebook 
+Set up docker with PostgreSQL and (optional) notebook \
 Run init.py to set up sql/json input sources
 
 Write a reusable data processing job to compute some KPIs based on the following input sources:
