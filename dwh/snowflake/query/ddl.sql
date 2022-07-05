@@ -1,8 +1,18 @@
 -- Data Definition Language: CREATE, ALTER, DROP, etc
 
+USE ROLE ACCOUNTADMIN;
+
+CREATE WAREHOUSE etl_wh;
+
+USE WAREHOUSE etl_wh;
+
 CREATE DATABASE cookbook;
 
 SHOW DATABASES LIKE 'cookbook';
+
+USE DATABASE cookbook;
+
+select current_warehouse(), current_database(), current_schema();
 
 
 
@@ -62,7 +72,43 @@ CREATE OR REPLACE STAGE s3store URL='s3://snowflake-cookbook/Chapter02/r4/';
 LIST @s3store;
 
 CREATE OR REPLACE EXTERNAL TABLE tbl_ext WITH LOCATION = @s3store file_format = (TYPE=parquet);
-SELECT * FROM tbl_ext; -- external table always have JSON data
+SELECT * FROM tbl_ext LIMIT 10; -- external table always have JSON DATA
+
+CREATE OR REPLACE EXTERNAL TABLE tbl_ext_csv WITH LOCATION = @s3store/csv pattern = '.*electronic-card-transactions-may-2020.csv' file_format = (TYPE=csv);
+SELECT * FROM tbl_ext_csv LIMIT 10; -- external table always have JSON data
 
 
-SHOW TABLES LIKE 'customer%'
+SHOW TABLES;
+
+SELECT top 3
+value:birthdate::date AS birth_date,
+value:country::string AS country,
+value:first_name::string AS first_name,
+value:last_name::string AS last_name, 
+value:salary::float AS salary
+FROM tbl_ext;
+
+
+-- simple and materialized views
+CREATE DATABASE test_view_creation;
+USE DATABASE test_view_creation;
+
+
+CREATE VIEW test_view_creation.public.date_wise_orders as
+select 
+l_commitdate as order_date,
+sum(l_quantity) as tot_qty,
+sum(l_extendedprice) as tot_price
+from SNOWFLAKE_SAMPLE_DATA.TPCH_SF1000.LINEITEM 
+group by l_commitdate;
+
+
+
+CREATE MATERIALIZED VIEW test_view_creation.public.date_wise_orders_m as
+select 
+l_commitdate as order_date,
+sum(l_quantity) as tot_qty,
+sum(l_extendedprice) as tot_price
+from SNOWFLAKE_SAMPLE_DATA.TPCH_SF1000.LINEITEM 
+group by l_commitdate;
+
