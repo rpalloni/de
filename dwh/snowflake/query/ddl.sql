@@ -28,7 +28,7 @@ INSERT INTO USERS values('003', 'cuser', 26);
 
 -- via SnowSQL https://community.snowflake.com/s/question/0D50Z00007r3NloSAE/the-command-is-not-supported-from-the-ui-put
 CREATE OR REPLACE STAGE users_stage;
-PUT file:///tmp/snowdata/usersdata.csv @users_stage; -- stage the file in an internal LOCATION
+PUT file:///tmp/data/usersdata.csv @users_stage; -- stage the file in an internal LOCATION
 LIST @users_stage; -- verify the list of files staged successfully
 COPY INTO users; -- copy into the table
 
@@ -84,7 +84,7 @@ SELECT top 3
 value:birthdate::date AS birth_date,
 value:country::string AS country,
 value:first_name::string AS first_name,
-value:last_name::string AS last_name, 
+value:last_name::string AS last_name,
 value:salary::float AS salary
 FROM tbl_ext;
 
@@ -95,20 +95,75 @@ USE DATABASE test_view_creation;
 
 
 CREATE VIEW test_view_creation.public.date_wise_orders as
-select 
+select
 l_commitdate as order_date,
 sum(l_quantity) as tot_qty,
 sum(l_extendedprice) as tot_price
-from SNOWFLAKE_SAMPLE_DATA.TPCH_SF1000.LINEITEM 
+from SNOWFLAKE_SAMPLE_DATA.TPCH_SF1000.LINEITEM
 group by l_commitdate;
 
 
 
 CREATE MATERIALIZED VIEW test_view_creation.public.date_wise_orders_m as
-select 
+select
 l_commitdate as order_date,
 sum(l_quantity) as tot_qty,
 sum(l_extendedprice) as tot_price
-from SNOWFLAKE_SAMPLE_DATA.TPCH_SF1000.LINEITEM 
+from SNOWFLAKE_SAMPLE_DATA.TPCH_SF1000.LINEITEM
 group by l_commitdate;
 
+
+-- access s3 bucket via snowflake with storage integration object
+-- a storage integration allows users to avoid supplying credentials to access a private storage location
+CREATE STORAGE INTEGRATION S3_INTEGRATION
+TYPE = EXTERNAL_STAGE
+STORAGE_PROVIDER = S3
+ENABLED = TRUE
+STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::1234567891012:role/SnowflakeRole'
+STORAGE_ALLOWED_LOCATIONS = ('s3://abc123');
+
+DESC INTEGRATION S3_INTEGRATION; -- change param in Role Trust Relationship
+-- STORAGE_AWS_IAM_USER_ARN
+-- STORAGE_AWS_EXTERNAL_ID
+
+
+CREATE FILE FORMAT S3CSV
+TYPE = CSV
+SKIP_HEADER = 1
+FIELD_OPTIONALLY_ENCLOSED_BY = '"';
+
+CREATE STAGE S3_STAGE
+STORAGE_INTEGRATION = S3_INTEGRATION
+URL = 's3://abc123'
+FILE_FORMAT = S3CSV;
+
+LIST @S3_STAGE;
+
+
+CREATE TABLE CARDSDATA (
+	customer_name string,
+	credit_card string,
+	type string,
+	ccv integer,
+	exp_date string
+);
+
+COPY INTO CARDSDATA FROM @S3_STAGE;
+
+select * from cardsdata;
+
+-- direct reference
+CREATE TABLE CARDSDATADIR (
+	customer_name string,
+	credit_card string,
+	type string,
+	ccv integer,
+	exp_date string
+);
+
+COPY INTO cardsdatadir FROM s3://abc123/cc_info.csv
+CREDENTIALS = (AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>') -- awsuser credentials
+FILE_FORMAT = (TYPE = csv SKIP_HEADER = 1 FIELD_OPTIONALLY_ENCLOSED_BY = '"');
+
+
+select * from cardsdatadir;
