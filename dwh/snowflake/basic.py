@@ -8,7 +8,7 @@ conn = snow.connect(
 
 conn.cursor().execute('USE DATABASE cookbook')
 
-# add data from local file
+# add data from local file system
 conn.cursor().execute('PUT file:///tmp/data/usersdata.csv @%users')
 conn.cursor().execute('COPY INTO users')
 
@@ -43,6 +43,35 @@ rows_to_insert = [
 
 conn.cursor().executemany('insert into CARDSDATA (customer_name, credit_card, type, ccv, exp_date) values (%s, %s, %s, %s, %s)', rows_to_insert)
 conn.cursor().execute('SELECT count(*) FROM CARDSDATA').fetchone()
+
+
+# handling errors
+rows_to_insert = [
+    ('Test Row', '9323391001765046', 'American Express', 999, '02/27'),
+    ('Record Test', '4610093233965017', 'Mastercard', 000, '05/25')
+]
+
+try:
+    # no CARDS table
+    conn.cursor().executemany('insert into CARDS (customer_name, credit_card, type, ccv, exp_date) values (%s, %s, %s, %s, %s)', rows_to_insert)
+except Exception as e:
+    conn.rollback()
+    raise e
+finally:
+    conn.close()
+
+
+from snowflake.connector.errors import ProgrammingError
+try:
+    results = conn.cursor().execute('SELECT * FROM CARDS').fetchall()
+    print([r for r in results])
+except ProgrammingError as e:
+    # default error message
+    # print(e)
+    # custom error message
+    print(f'Error {e.errno} ({e.sqlstate}) - Message: {e.msg} [QueryID: {e.sfqid}]')
+finally:
+    conn.close()
 
 
 conn.close()
