@@ -71,10 +71,13 @@ CREATE TRANSIENT TABLE customer_trans AS SELECT * FROM customers WHERE try_to_nu
 CREATE OR REPLACE STAGE s3store URL='s3://snowflake-cookbook/Chapter02/r4/';
 LIST @s3store;
 
-CREATE OR REPLACE EXTERNAL TABLE tbl_ext WITH LOCATION = @s3store file_format = (TYPE=parquet);
-SELECT * FROM tbl_ext LIMIT 10; -- external table always have JSON DATA
 
-CREATE OR REPLACE EXTERNAL TABLE tbl_ext_csv WITH LOCATION = @s3store/csv pattern = '.*electronic-card-transactions-may-2020.csv' file_format = (TYPE=csv);
+CREATE OR REPLACE EXTERNAL TABLE tbl_ext WITH LOCATION = @s3store FILE_FORMAT = (TYPE=parquet);
+SELECT * FROM tbl_ext LIMIT 10; -- external table always have JSON data
+
+CREATE OR REPLACE EXTERNAL TABLE tbl_ext_csv 
+WITH LOCATION = @s3store/csv pattern = '.*electronic-card-transactions-may-2020.csv' 
+FILE_FORMAT = (TYPE=csv DATE_FORMAT = 'YYYY-MM-DD');
 SELECT * FROM tbl_ext_csv LIMIT 10; -- external table always have JSON data
 
 
@@ -87,6 +90,23 @@ value:first_name::string AS first_name,
 value:last_name::string AS last_name,
 value:salary::float AS salary
 FROM tbl_ext;
+
+
+-- query stage directly
+CREATE FILE FORMAT CUSTOM_PARQUET
+TYPE = PARQUET;
+
+CREATE OR REPLACE STAGE s3storeparquet 
+URL='s3://snowflake-cookbook/Chapter02/r4/parquet/userdata1.parquet' 
+FILE_FORMAT=CUSTOM_PARQUET;
+LIST @s3storeparquet;
+
+-- parquet data are loaded as JSON in SnowFlake (VARIANT data type column)
+select $1 from @s3storeparquet;
+select $1:birthdate from @s3storeparquet;
+
+select PARSE_JSON($1) from @s3storeparquet;
+
 
 
 -- simple and materialized views
@@ -144,7 +164,7 @@ CREATE TABLE CARDSDATA (
 	customer_name string,
 	credit_card string,
 	type string,
-	ccv integer,
+	cvv integer,
 	exp_date string
 );
 
@@ -157,7 +177,7 @@ CREATE TABLE CARDSDATADIR (
 	customer_name string,
 	credit_card string,
 	type string,
-	ccv integer,
+	cvv integer,
 	exp_date string
 );
 
@@ -167,3 +187,18 @@ FILE_FORMAT = (TYPE = csv SKIP_HEADER = 1 FIELD_OPTIONALLY_ENCLOSED_BY = '"');
 
 
 select * from cardsdatadir;
+
+
+-- export dwh data to S3
+CREATE OR REPLACE STAGE EXPORT_DATA
+STORAGE_INTEGRATION = S3_INTEGRATION 
+URL = 's3://abc123'
+FILE_FORMAT = (TYPE = CSV);
+
+COPY INTO @EXPORT_DATA/cardsdata_backup.csv
+FROM (
+	SELECT * FROM CARDSDATA
+);
+-- cardsdata_backup.csv_0_0_0.csv.gz in bucket
+
+
