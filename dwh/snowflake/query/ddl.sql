@@ -26,13 +26,12 @@ SELECT * FROM users;
 
 INSERT INTO USERS values('003', 'cuser', 26);
 
--- via SnowSQL https://community.snowflake.com/s/question/0D50Z00007r3NloSAE/the-command-is-not-supported-from-the-ui-put
+-- via SnowSQL, it is not possible to use web ui
+-- a tool that has access to the local file system is needed when loading from local file system
 CREATE OR REPLACE STAGE users_stage;
 PUT file:///tmp/data/usersdata.csv @users_stage; -- stage the file in an internal LOCATION
 LIST @users_stage; -- verify the list of files staged successfully
 COPY INTO users; -- copy into the table
-
-
 
 
 
@@ -68,11 +67,13 @@ CREATE TEMPORARY TABLE customer_temp AS SELECT * FROM customers WHERE try_to_num
 CREATE TRANSIENT TABLE customer_trans AS SELECT * FROM customers WHERE try_to_number(postal_code) IS NULL;
 
 -- external
-CREATE OR REPLACE STAGE s3store URL='s3://snowflake-cookbook/Chapter02/r4/';
+CREATE OR REPLACE STAGE s3store URL='s3://snowflake-cookbook/Chapter02/r4/'; -- public bucket
 LIST @s3store;
 
 
-CREATE OR REPLACE EXTERNAL TABLE tbl_ext WITH LOCATION = @s3store FILE_FORMAT = (TYPE=parquet);
+CREATE OR REPLACE EXTERNAL TABLE tbl_ext 
+WITH LOCATION = @s3store 
+FILE_FORMAT = (TYPE=parquet);
 SELECT * FROM tbl_ext LIMIT 10; -- external table always have JSON data
 
 CREATE OR REPLACE EXTERNAL TABLE tbl_ext_csv 
@@ -142,7 +143,7 @@ ENABLED = TRUE
 STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::1234567891012:role/SnowflakeRole'
 STORAGE_ALLOWED_LOCATIONS = ('s3://abc123');
 
-DESC INTEGRATION S3_INTEGRATION; -- change param in Role Trust Relationship
+DESC INTEGRATION S3_INTEGRATION; -- change param in AWS Role Trust Relationship
 -- STORAGE_AWS_IAM_USER_ARN
 -- STORAGE_AWS_EXTERNAL_ID
 
