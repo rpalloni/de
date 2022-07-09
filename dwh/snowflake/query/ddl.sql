@@ -12,7 +12,19 @@ SHOW DATABASES LIKE 'cookbook';
 
 USE DATABASE cookbook;
 
-select current_warehouse(), current_database(), current_schema();
+select current_warehouse(), current_database(), current_schema(); -- context utility FUNCTIONS
+/*	General Context			Session Context			Session Context Object
+	----------------------------------------------------------------------
+	current_client()		current_account()		current_warehouse()
+	current_date()			current_role()			current_database()
+	current_region()		current_session()		current_schema()
+	current_time()			current_user()			current_schemas()
+	current_timestamp()		current_statement()		invoker_role()
+	current_version()		current_transaction()	invoker_share()
+	localtime()				last_query_id()			is_granted_to_invoker_role()
+	localtimestamp()		last_transaction()		is_role_in_session(current_session())
+	sysdate()
+*/
 
 
 
@@ -143,7 +155,7 @@ ENABLED = TRUE
 STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::1234567891012:role/SnowflakeRole'
 STORAGE_ALLOWED_LOCATIONS = ('s3://abc123');
 
-DESC INTEGRATION S3_INTEGRATION; -- change param in AWS Role Trust Relationship
+DESCRIBE INTEGRATION S3_INTEGRATION; -- change param in AWS Role Trust Relationship
 -- STORAGE_AWS_IAM_USER_ARN
 -- STORAGE_AWS_EXTERNAL_ID
 
