@@ -1,0 +1,49 @@
+/* In snowflake privileges cannot be directly granted to users.
+Privileges are granted to a role, and the role is then granted 
+to one or more users.
+*/
+
+USE ROLE SYSADMIN;
+
+CREATE DATABASE DEV;
+
+USE DATABASE DEV;
+
+CREATE TABLE customer (
+	id STRING,
+	first_name STRING,
+	last_name STRING
+);
+
+USE ROLE SECURITYADMIN;
+
+
+CREATE USER dev_db_user01 PASSWORD = 'pwd12345' MUST_CHANGE_PASSWORD = TRUE;
+
+USE DATABASE DEV;
+
+CREATE ROLE DEV_DB_ROLE;
+
+SHOW GRANTS TO ROLE DEV_DB_ROLE; -- no privileges on role creation
+
+GRANT ALL ON WAREHOUSE COMPUTE_WH TO ROLE DEV_DB_ROLE;
+GRANT ALL ON DATABASE DEV TO ROLE DEV_DB_ROLE;
+GRANT ALL ON ALL SCHEMAS IN DATABASE dev TO ROLE DEV_DB_ROLE;
+GRANT ALL ON TABLE DEV.PUBLIC.CUSTOMER TO ROLE DEV_DB_ROLE;
+SHOW GRANTS TO ROLE DEV_DB_ROLE;
+
+USE ROLE SECURITYADMIN;
+GRANT ROLE DEV_DB_ROLE TO USER dev_db_user01; -- grant role to USER
+ALTER USER dev_db_user01 SET DEFAULT_ROLE = 'DEV_DB_ROLE'; -- set as DEFAULT
+
+GRANT ROLE DEV_DB_ROLE TO ROLE SYSADMIN; -- complete role hierarchy (p130)
+
+-- login as dev_db_user01
+SELECT current_role(); -- public
+USE ROLE DEV_DB_ROLE;
+
+USE WAREHOUSE COMPUTE_WH;
+USE DATABASE DEV;
+
+SELECT * FROM CUSTOMER;
+
