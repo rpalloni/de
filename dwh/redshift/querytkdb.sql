@@ -38,7 +38,7 @@ COPY ext_file_upload.sales from 's3://abc123/sales_tab.txt'
 credentials 'aws_iam_role=arn:aws:iam::1234567891012:role/RedshiftS3Access' -- map the role to the cluster permissions
 delimiter '\t'
 timeformat 'MM/DD/YYYY HH:MI:SS'
-region 'eu-central-1';
+region '<region>';
 
 
 --validation query: get total count of sales records
