@@ -68,13 +68,13 @@ CREATE OR REPLACE STAGE s3store URL='s3://snowflake-cookbook/Chapter02/r4/'; -- 
 LIST @s3store;
 
 
-CREATE OR REPLACE EXTERNAL TABLE tbl_ext 
-WITH LOCATION = @s3store 
+CREATE OR REPLACE EXTERNAL TABLE tbl_ext
+WITH LOCATION = @s3store
 FILE_FORMAT = (TYPE=parquet);
 SELECT * FROM tbl_ext LIMIT 10; -- external table always have JSON data
 
-CREATE OR REPLACE EXTERNAL TABLE tbl_ext_csv 
-WITH LOCATION = @s3store/csv pattern = '.*electronic-card-transactions-may-2020.csv' 
+CREATE OR REPLACE EXTERNAL TABLE tbl_ext_csv
+WITH LOCATION = @s3store/csv pattern = '.*electronic-card-transactions-may-2020.csv'
 FILE_FORMAT = (TYPE=csv DATE_FORMAT = 'YYYY-MM-DD');
 SELECT * FROM tbl_ext_csv LIMIT 10; -- external table always have JSON data
 
@@ -94,8 +94,8 @@ FROM tbl_ext;
 CREATE FILE FORMAT CUSTOM_PARQUET
 TYPE = PARQUET;
 
-CREATE OR REPLACE STAGE s3storeparquet 
-URL='s3://snowflake-cookbook/Chapter02/r4/parquet/userdata1.parquet' 
+CREATE OR REPLACE STAGE s3storeparquet
+URL='s3://snowflake-cookbook/Chapter02/r4/parquet/userdata1.parquet'
 FILE_FORMAT=CUSTOM_PARQUET;
 LIST @s3storeparquet;
 
@@ -107,7 +107,7 @@ select PARSE_JSON($1) from @s3storeparquet;
 
 
 
--- simple and materialized views
+-- simple and materialized views (secure view share_sview)
 CREATE DATABASE test_view_creation;
 USE DATABASE test_view_creation;
 
@@ -189,7 +189,7 @@ select * from cardsdatadir;
 
 -- export dwh data to S3
 CREATE OR REPLACE STAGE EXPORT_DATA
-STORAGE_INTEGRATION = S3_INTEGRATION 
+STORAGE_INTEGRATION = S3_INTEGRATION
 URL = 's3://abc123'
 FILE_FORMAT = (TYPE = CSV);
 
@@ -199,4 +199,10 @@ FROM (
 );
 -- cardsdata_backup.csv_0_0_0.csv.gz in bucket
 
+-- snowpark python
+CREATE STAGE S3_STAGE_EMP
+STORAGE_INTEGRATION = S3_INTEGRATION
+URL = 's3://abc123/employees.csv'
+FILE_FORMAT = S3CSV;
 
+LIST @S3_STAGE_EMP;
