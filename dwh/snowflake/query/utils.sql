@@ -7,7 +7,16 @@ SELECT * FROM SESSIONS;
 SELECT * FROM ROLES;
 SELECT * FROM USERS;
 SELECT * FROM FILE_FORMATS;
-SELECT * FROM QUERY_HISTORY ORDER BY EXECUTION_TIME DESC;
+SELECT * FROM QUERY_HISTORY ORDER BY EXECUTION_TIME DESC; 
+SELECT query_id, bytes_scanned, partitions_scanned, partitions_total 
+FROM QUERY_HISTORY 
+WHERE start_time > dateadd(MINUTE, -30, current_timestamp()) -- last 30 minutes
+AND query_text LIKE '%<TABLE>%'
+ORDER BY start_time DESC;
+/* 
+WARNING: https://docs.snowflake.com/en/sql-reference/account-usage.html#data-latency
+DO NOT USE: SELECT * FROM QUERY_HISTORY WHERE QUERY_ID = last_query_id()
+*/
 
 SELECT 	
 	TABLE_CATALOG, -- db
@@ -17,6 +26,11 @@ SELECT
 	FAILSAFE_BYTES / (1024*1024*1024) AS FAILSAFE_STORAGE
 FROM TABLE_STORAGE_METRICS
 ORDER BY STORAGE_USED DESC;
+
+
+/* system functions */
+-- https://docs.snowflake.com/en/sql-reference/functions-system.html
+SELECT SYSTEM$CLUSTERING_INFORMATION('table', '(cluster_col)');
 
 
 /* context utility FUNCTIONS */
