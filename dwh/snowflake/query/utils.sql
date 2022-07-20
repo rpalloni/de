@@ -54,7 +54,7 @@ SHOW PARAMETERS LIKE '%LANGUAGE';
 SHOW PARAMETERS LIKE '%TIMEZONE' IN ACCOUNT;
 SHOW PARAMETERS LIKE '%TIMEZONE' IN SESSION;
 
-ALTER SESSION SET TIMEZONE = 'Europe/Rome';
+ALTER SESSION SET TIMEZONE = 'Europe/Rome'; -- https://docs.snowflake.com/en/sql-reference/parameters.html#timezone
 
 SELECT 
 localtime(), 
