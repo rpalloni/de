@@ -62,28 +62,3 @@ localtimestamp(),
 current_time(),
 current_timestamp(),
 sysdate(); -- current timestamp for the system, but in the UTC time zone;
-
-
-/* time utils */
-SELECT (to_date('2022-01-01') + seq4()) cal_date,
-DATE_PART(day, cal_date) as cal_day,
-DATE_PART(month, cal_date) as cal_month,
-DATE_PART(year, cal_date) as cal_year,
-DECODE(cal_month,
-   1, 'January',
-   2, 'February',
-   3, 'March',
-   4, 'April',
-   5, 'May',
-   6, 'June',
-   7, 'July',
-   8, 'August',
-   9, 'September',
-   10, 'October',
-   11, 'November',
-   12, 'December') as cal_month_name,
-DATE_TRUNC('month', cal_date) as cal_first_day,
-DATEADD('day', -1, DATEADD('month', 1, DATE_TRUNC('month', cal_date))) as cal_last_day,
-DATEADD('day', -1, DATEADD('month', 3, DATE_TRUNC('quarter', cal_date))) as cal_qrt_end
-FROM TABLE(GENERATOR(ROWCOUNT => 365))
---ORDER BY cal_dt desc;
