@@ -52,7 +52,6 @@ DESCRIBE TABLE customers;
 COPY INTO customers FROM s3://snowflake-cookbook/Chapter02/r3/customer.csv
 FILE_FORMAT = (TYPE = csv SKIP_HEADER = 1 FIELD_OPTIONALLY_ENCLOSED_BY = '"');
 
-
 SELECT * FROM customers;
 
 -- deep and shallow copies
@@ -66,6 +65,7 @@ CREATE TRANSIENT TABLE customer_trans AS SELECT * FROM customers WHERE try_to_nu
 -- external
 CREATE OR REPLACE STAGE s3store URL='s3://snowflake-cookbook/Chapter02/r4/'; -- public bucket
 LIST @s3store;
+SELECT metadata$filename, metadata$file_row_number, $1, $2, $3 FROM @s3store/csv; -- query in stage
 
 
 CREATE OR REPLACE EXTERNAL TABLE tbl_ext
@@ -105,6 +105,22 @@ select $1:birthdate from @s3storeparquet;
 
 select PARSE_JSON($1) from @s3storeparquet;
 
+-- partial data from stage
+CREATE OR REPLACE STAGE s3customer
+URL='s3://snowflake-cookbook/Chapter02/r3/customer.csv'
+FILE_FORMAT = (TYPE = csv SKIP_HEADER = 1 FIELD_OPTIONALLY_ENCLOSED_BY = '"');
+LIST @s3customer;
+
+CREATE OR REPLACE TABLE partial_customers (
+	last_name VARCHAR(100),
+	first_name VARCHAR(100),
+	city VARCHAR(100)
+);
+
+COPY INTO partial_customers(last_name, first_name, city)
+FROM (SELECT $2, $3, $9 FROM @s3customer)
+
+SELECT * FROM partial_customers
 
 
 -- simple and materialized views (secure view share_sview)
