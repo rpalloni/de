@@ -1,9 +1,10 @@
+import config
 import snowflake.connector as snow
 
 conn = snow.connect(
-    user='<user>',
-    password='<pwd>',
-    account='<account>' # xyz.us-east-1
+    user=config.snowflake_user,
+    password=config.snowflake_password,
+    account=config.snowflake_account # xyz.us-east-1
 )
 
 conn.cursor().execute('USE DATABASE cookbook')
@@ -13,6 +14,7 @@ conn.cursor().execute('PUT file:///tmp/data/usersdata.csv @%users')
 conn.cursor().execute('COPY INTO users')
 
 result = conn.cursor().execute('SELECT * FROM CARDSDATA').fetchone()
+result
 
 
 results = conn.cursor().execute('SELECT * FROM CARDSDATA').fetchall()
