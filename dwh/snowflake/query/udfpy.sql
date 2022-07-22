@@ -1,0 +1,1 @@
+-- https://docs.snowflake.com/en/developer-guide/udf/python/udf-python.html
