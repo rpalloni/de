@@ -1,0 +1,12 @@
+
+version: 2
+
+models:
+  - name: cus_ord_pay
+    description: "customers orders payments"
+    columns:
+      - name: customer_id
+        description: "customer id"
+        tests:
+          - unique
+          - not_null
