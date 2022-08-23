@@ -104,6 +104,14 @@ df_schema = session.create_dataframe([
 ], schema)
 df_schema.show()
 
+# lazy evaluation caveats: use cache
+df = session.read.parquet('@stageName/path') # lazy evaluation: no file loaded
+df1 = df.select('col1').collect() # load
+df2 = df.select('col2').collect() # load again
+
+df = df.cache_result() # load to temporary table
+df1 = df.select('col1').collect() # read from temp tab
+df2 = df.select('col2').collect() # read from temp tab
 
 # query
 (
