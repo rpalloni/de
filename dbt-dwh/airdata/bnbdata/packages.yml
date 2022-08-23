@@ -1,0 +1,9 @@
+packages:
+  - package: dbt-labs/dbt_utils
+    version: 0.8.6
+
+# [install] dbt deps
+# [docs] https://github.com/dbt-labs/dbt-utils/tree/0.8.6/#contents
+# [use as test or macro] 
+#   - dbt_utils.equality: 
+#   {{ dbt_utils.generate_series(upper_bound=1000) }}

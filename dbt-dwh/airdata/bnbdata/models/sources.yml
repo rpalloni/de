@@ -1,0 +1,20 @@
+# define alias for <db>.<schema>.<table> used in models
+# define data checks
+version: 2
+
+sources:
+  - name: airbnb
+    schema: raw
+    tables:
+      - name: listings
+        identifier: raw_listings
+
+      - name: hosts
+        identifier: raw_hosts
+
+      - name: reviews
+        identifier: raw_reviews
+        loaded_at_field: date # field to check
+        freshness:
+          warn_after: {count: 1, period: hour}    # WARNING: no data after an hour
+          error_after: {count: 24, period: hour}  # ERROR: no data after 24 hours
