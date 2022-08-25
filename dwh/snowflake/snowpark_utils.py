@@ -1,6 +1,6 @@
 import config
 from snowflake.snowpark import Session
-from snowflake.snowpark.functions import col, udf
+from snowflake.snowpark.functions import col, udf, sproc
 
 connection_parameters = {
     'account': config.snowflake_account,
@@ -53,3 +53,25 @@ def is_main_prod(serial: str) -> bool:
         return False
 
 df.select(is_main_prod(col('serial_number'))).show()
+
+# stored procedure
+# CREATE OR REPLACE STAGE pystage;
+# CREATE TABLE product_data_shlw_copy LIKE product_data; -- only structure
+
+@sproc(
+    session=session,
+    packages=['snowflake-snowpark-python'],
+    is_permanent=True,
+    stage_location='@pystage',
+    name='pyproc')
+def run(session: Session, from_table: str, to_table: str, cnt: int) -> str:
+    (
+      session.table(from_table).limit(cnt)
+      .write.mode('overwrite')
+      .save_as_table(to_table)
+    )
+    return 'OK!'
+
+session.call('pyproc', 'product_data', 'product_data_shlw_copy', 3)
+
+# SELECT * FROM product_data_shlw_copy;
