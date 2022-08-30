@@ -23,4 +23,6 @@ FILE_FORMAT = (TYPE = CSV SKIP_HEADER = 1);
 
 SHOW PIPES; -- aws ARN of notification_channel [SQS queue]
 
+
+-- add data file to the S3 bucket and check data loaded
 SELECT count(*) FROM TRANSACTIONS;
