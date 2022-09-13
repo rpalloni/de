@@ -1,4 +1,4 @@
-/* setup user and raw data tables */
+/* setup user, raw data tables and seeds */
 
 -- Use an admin role
 USE ROLE ACCOUNTADMIN;
