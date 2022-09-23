@@ -5,7 +5,6 @@ import cachetools
 
 from snowflake.snowpark import Session
 from snowflake.snowpark.functions import col, udf, sproc, call_udf
-from snowflake.snowpark.types import StructType, StructField, DecimalType, StringType
 from snowflake.snowpark.types import PandasDataFrame, PandasSeries
 
 import pandas as pd
